@@ -1,0 +1,2 @@
+# CustomEnchantments
+Custom premium plugin.

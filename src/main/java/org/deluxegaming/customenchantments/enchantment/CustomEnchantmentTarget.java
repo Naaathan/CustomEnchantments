@@ -1,9 +1,9 @@
-package org.deluxegaming.dxgmenchantments.enchantment;
+package org.deluxegaming.customenchantments.enchantment;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public enum DXGMEnchantmentTarget {
+public enum CustomEnchantmentTarget {
 
     ALL {
         public boolean includes(ItemStack itemStack) {
@@ -63,7 +63,7 @@ public enum DXGMEnchantmentTarget {
 
     public static boolean isTarget(ItemStack itemStack) {
         if (itemStack != null) {
-            for (DXGMEnchantmentTarget target : values()) {
+            for (CustomEnchantmentTarget target : values()) {
                 if (target.includes(itemStack)) {
                     return true;
                 }

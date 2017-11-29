@@ -1,13 +1,13 @@
-package org.deluxegaming.dxgmenchantments.utility;
+package org.deluxegaming.customenchantments.utility;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import org.deluxegaming.dxgmenchantments.DXGMEnchantments;
-import org.deluxegaming.dxgmenchantments.enchantment.DXGMEnchantment;
-import org.deluxegaming.dxgmenchantments.enchantment.DXGMEnchantmentTarget;
+import org.deluxegaming.customenchantments.CustomEnchantments;
+import org.deluxegaming.customenchantments.enchantment.CustomEnchantment;
+import org.deluxegaming.customenchantments.enchantment.CustomEnchantmentTarget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,15 +16,15 @@ import java.util.Map;
 
 public class EnchantmentUtils {
 
-    public static boolean addEnchantment(ItemStack itemStack, DXGMEnchantment enchantment, int level) {
+    public static boolean addEnchantment(ItemStack itemStack, CustomEnchantment enchantment, int level) {
         if (!enchantment.canEnchantItem(itemStack)) {
             return false;
         }
 
-        Map<DXGMEnchantment, Integer> itemEnchantments = getEnchantments(itemStack);
+        Map<CustomEnchantment, Integer> itemEnchantments = getEnchantments(itemStack);
 
         if (!itemEnchantments.isEmpty()) {
-            for (DXGMEnchantment itemEnchantment : itemEnchantments.keySet()) {
+            for (CustomEnchantment itemEnchantment : itemEnchantments.keySet()) {
                 if (itemEnchantment.equals(enchantment)) {
                     return false;
                 }
@@ -38,7 +38,7 @@ public class EnchantmentUtils {
         return true;
     }
 
-    public static boolean removeEnchantment(ItemStack itemStack, DXGMEnchantment enchantment) {
+    public static boolean removeEnchantment(ItemStack itemStack, CustomEnchantment enchantment) {
         if (!hasEnchantment(itemStack, enchantment)) {
             return false;
         }
@@ -62,31 +62,31 @@ public class EnchantmentUtils {
     public static List<ItemStack> getEnchantableItems(Player player) {
         List<ItemStack> enchantableItems = new ArrayList<>();
 
-        if (DXGMEnchantmentTarget.isTarget(player.getItemInHand())) {
+        if (CustomEnchantmentTarget.isTarget(player.getItemInHand())) {
             enchantableItems.add(player.getItemInHand());
         }
 
-        if (DXGMEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[0])) {
+        if (CustomEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[0])) {
             enchantableItems.add(player.getInventory().getArmorContents()[0]);
         }
 
-        if (DXGMEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[1])) {
+        if (CustomEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[1])) {
             enchantableItems.add(player.getInventory().getArmorContents()[1]);
         }
 
-        if (DXGMEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[2])) {
+        if (CustomEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[2])) {
             enchantableItems.add(player.getInventory().getArmorContents()[2]);
         }
 
-        if (DXGMEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[3])) {
+        if (CustomEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[3])) {
             enchantableItems.add(player.getInventory().getArmorContents()[3]);
         }
 
         return enchantableItems;
     }
 
-    public static Map<DXGMEnchantment, Integer> getEnchantments(ItemStack itemStack) {
-        Map<DXGMEnchantment, Integer> enchantmentsWithLevels = new HashMap<>();
+    public static Map<CustomEnchantment, Integer> getEnchantments(ItemStack itemStack) {
+        Map<CustomEnchantment, Integer> enchantmentsWithLevels = new HashMap<>();
 
         if (!itemStack.hasItemMeta() || !itemStack.getItemMeta().hasLore()) {
             return enchantmentsWithLevels;
@@ -95,10 +95,10 @@ public class EnchantmentUtils {
         List<String> lore = itemStack.getItemMeta().getLore();
 
         if (!lore.isEmpty()) {
-            List<DXGMEnchantment> enchantments = DXGMEnchantments.getInstance().getEnchantments();
+            List<CustomEnchantment> enchantments = CustomEnchantments.getInstance().getEnchantments();
 
             for (String line : lore) {
-                for (DXGMEnchantment enchantment : enchantments) {
+                for (CustomEnchantment enchantment : enchantments) {
                     if (line.contains(enchantment.getDisplayName())) {
                         int level = getLevel(enchantment, line);
 
@@ -113,11 +113,11 @@ public class EnchantmentUtils {
         return enchantmentsWithLevels;
     }
 
-    public static int getLevel(ItemStack itemStack, DXGMEnchantment enchantment) {
+    public static int getLevel(ItemStack itemStack, CustomEnchantment enchantment) {
         return getLevel(itemStack, enchantment, false);
     }
 
-    public static int getLevel(ItemStack itemStack, DXGMEnchantment enchantment, boolean hasEnchantment) {
+    public static int getLevel(ItemStack itemStack, CustomEnchantment enchantment, boolean hasEnchantment) {
         if (!hasEnchantment && (!itemStack.getItemMeta().hasLore() || itemStack.getItemMeta().getLore().isEmpty())) {
             return 0;
         }
@@ -141,7 +141,7 @@ public class EnchantmentUtils {
         return 0;
     }
 
-    public static boolean hasEnchantment(ItemStack itemStack, DXGMEnchantment enchantment) {
+    public static boolean hasEnchantment(ItemStack itemStack, CustomEnchantment enchantment) {
         if (!itemStack.hasItemMeta() || !itemStack.getItemMeta().hasLore()) {
             return false;
         }
@@ -161,7 +161,7 @@ public class EnchantmentUtils {
         return false;
     }
 
-    private static int getLevel(DXGMEnchantment enchantment, String loreLine) {
+    private static int getLevel(CustomEnchantment enchantment, String loreLine) {
         String levelNumerals = ChatColor.stripColor(loreLine.replace(enchantment.getDisplayName() + " ", ""));
 
         if (!NumberUtils.isRomanNumeral(levelNumerals)) {

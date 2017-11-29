@@ -1,4 +1,4 @@
-package org.deluxegaming.dxgmenchantments.enchantment;
+package org.deluxegaming.customenchantments.enchantment;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -8,28 +8,31 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public abstract class DXGMEnchantment {
+public abstract class CustomEnchantment {
 
     private String name;
     private String displayName;
+    private int tier;
     private int startLevel;
     private int maxLevel;
 
-    public DXGMEnchantment(String name, String displayName, int startLevel, int maxLevel) {
+    public CustomEnchantment(String name, String displayName, int tier, int startLevel, int maxLevel) {
         this.name = name;
         this.displayName = displayName;
+        this.tier = tier;
         this.startLevel = startLevel;
         this.maxLevel = maxLevel;
     }
 
     @Override
     public final boolean equals(Object obj) {
-        DXGMEnchantment enchantment;
+        CustomEnchantment enchantment;
 
-        if (obj instanceof DXGMEnchantment) {
-            enchantment = (DXGMEnchantment) obj;
+        if (obj instanceof CustomEnchantment) {
+            enchantment = (CustomEnchantment) obj;
         } else {
             return false;
         }
@@ -45,6 +48,10 @@ public abstract class DXGMEnchantment {
         return displayName;
     }
 
+    public final int getTier() {
+        return tier;
+    }
+
     public final int getStartLevel() {
         return startLevel;
     }
@@ -54,7 +61,7 @@ public abstract class DXGMEnchantment {
     }
 
     public final boolean canEnchantItem(ItemStack itemStack) {
-        DXGMEnchantmentTarget itemTarget = getItemTarget();
+        CustomEnchantmentTarget itemTarget = getItemTarget();
 
         if (itemTarget == null || itemStack == null) {
             return false;
@@ -63,7 +70,7 @@ public abstract class DXGMEnchantment {
         return itemTarget.includes(itemStack);
     }
 
-    public abstract DXGMEnchantmentTarget getItemTarget();
+    public abstract CustomEnchantmentTarget getItemTarget();
 
     public void onBlockBreak(BlockBreakEvent e, Player player, int level) {
     }
@@ -72,6 +79,9 @@ public abstract class DXGMEnchantment {
     }
 
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e, Entity damaged, Entity damager, int level) {
+    }
+
+    public void onPlayerInteract(PlayerInteractEvent e, Player player, int level) {
     }
 
     public void onProjectileHit(ProjectileHitEvent e, Player shooter, Projectile projectile, int level) {

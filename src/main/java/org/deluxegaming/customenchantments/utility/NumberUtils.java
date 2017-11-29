@@ -1,4 +1,4 @@
-package org.deluxegaming.dxgmenchantments.utility;
+package org.deluxegaming.customenchantments.utility;
 
 import java.util.Hashtable;
 import java.util.Map;

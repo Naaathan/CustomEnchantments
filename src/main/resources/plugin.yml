@@ -1,0 +1,7 @@
+name: DXGMEnchantments
+version: 1.0-SNAPSHOT
+main: org.deluxegaming.dxgmenchantments.DXGMEnchantments
+author: Nathan
+commands:
+  dxgmenchantments:
+    description: Manage custom enchantments.

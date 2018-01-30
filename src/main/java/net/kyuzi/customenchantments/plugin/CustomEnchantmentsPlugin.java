@@ -1,9 +1,9 @@
-package org.deluxegaming.customenchantments.plugin;
+package net.kyuzi.customenchantments.plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import org.deluxegaming.customenchantments.CustomEnchantments;
-import org.deluxegaming.customenchantments.enchantment.CustomEnchantment;
+import net.kyuzi.customenchantments.CustomEnchantments;
+import net.kyuzi.customenchantments.enchantment.CustomEnchantment;
 
 public class CustomEnchantmentsPlugin extends JavaPlugin {
 
@@ -13,7 +13,7 @@ public class CustomEnchantmentsPlugin extends JavaPlugin {
         }
 
         for (CustomEnchantment enchantment : enchantments) {
-            CustomEnchantments.getInstance().addEnchantment(enchantment);
+            CustomEnchantments.getInstance().registerEnchantment(enchantment);
         }
     }
 
@@ -23,7 +23,7 @@ public class CustomEnchantmentsPlugin extends JavaPlugin {
         }
 
         for (CustomEnchantment enchantment : enchantments) {
-            CustomEnchantments.getInstance().removeEnchantment(enchantment.getName());
+            CustomEnchantments.getInstance().unregisterEnchantment(enchantment.getName());
         }
     }
 

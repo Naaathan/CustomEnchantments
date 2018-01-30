@@ -1,4 +1,4 @@
-package org.deluxegaming.customenchantments.enchantment;
+package net.kyuzi.customenchantments.enchantment;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -13,16 +13,16 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class CustomEnchantment {
 
+    private boolean enabled;
     private String name;
     private String displayName;
-    private int tier;
     private int startLevel;
     private int maxLevel;
 
-    public CustomEnchantment(String name, String displayName, int tier, int startLevel, int maxLevel) {
+    public CustomEnchantment(String name, String displayName, int startLevel, int maxLevel) {
+        this.enabled = true;
         this.name = name;
         this.displayName = displayName;
-        this.tier = tier;
         this.startLevel = startLevel;
         this.maxLevel = maxLevel;
     }
@@ -40,16 +40,20 @@ public abstract class CustomEnchantment {
         return enchantment.getName().equals(name);
     }
 
+    public final boolean isEnabled() {
+        return enabled;
+    }
+
+    public final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public final String getName() {
         return name;
     }
 
     public final String getDisplayName() {
         return displayName;
-    }
-
-    public final int getTier() {
-        return tier;
     }
 
     public final int getStartLevel() {

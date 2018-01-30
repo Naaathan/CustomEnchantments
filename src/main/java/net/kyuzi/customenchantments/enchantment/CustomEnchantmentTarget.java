@@ -1,4 +1,4 @@
-package org.deluxegaming.customenchantments.enchantment;
+package net.kyuzi.customenchantments.enchantment;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

@@ -1,4 +1,4 @@
-package org.deluxegaming.customenchantments.utility;
+package net.kyuzi.customenchantments.utility;
 
 import java.util.Hashtable;
 import java.util.Map;

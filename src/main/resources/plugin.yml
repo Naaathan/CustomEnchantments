@@ -1,6 +1,6 @@
 name: CustomEnchantments
 version: 1.0-SNAPSHOT
-main: org.deluxegaming.customenchantmentsts.CustomEnchantments
+main: org.kyuzi.customenchantmentsts.CustomEnchantments
 author: Nathan
 commands:
   customenchantments:

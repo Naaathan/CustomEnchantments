@@ -1,27 +1,34 @@
-package org.deluxegaming.customenchantments.utility;
+package net.kyuzi.customenchantments;
+
+import net.kyuzi.customenchantments.enchantment.CustomEnchantment;
+import net.kyuzi.customenchantments.enchantment.CustomEnchantmentTarget;
+import net.kyuzi.customenchantments.utility.NumberUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import org.deluxegaming.customenchantments.CustomEnchantments;
-import org.deluxegaming.customenchantments.enchantment.CustomEnchantment;
-import org.deluxegaming.customenchantments.enchantment.CustomEnchantmentTarget;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+public class CustomEnchantmentsAPI {
 
-public class EnchantmentUtils {
-
+    /**
+     * <p>
+     * Adds a custom enchantment with a specific level to the item.
+     * </p>
+     *
+     * @param itemStack   The item to apply the enchantment to
+     * @param enchantment The enchantment to be applied
+     * @param level       The level of the enchantment
+     * @return True if the process was successful
+     */
     public static boolean addEnchantment(ItemStack itemStack, CustomEnchantment enchantment, int level) {
-        if (!enchantment.canEnchantItem(itemStack)) {
+        if (!enchantment.canEnchantItem(itemStack) && level >= enchantment.getStartLevel()) {
             return false;
         }
 
-        Map<CustomEnchantment, Integer> itemEnchantments = getEnchantments(itemStack);
+        Map<CustomEnchantment, Integer> itemEnchantments = CustomEnchantmentsAPI.getEnchantments(itemStack);
 
         if (!itemEnchantments.isEmpty()) {
             for (CustomEnchantment itemEnchantment : itemEnchantments.keySet()) {
@@ -34,12 +41,25 @@ public class EnchantmentUtils {
         ItemMeta itemMeta = itemStack.getItemMeta();
         List<String> lore = (itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>());
 
-        // order item enchantments by tier and add to lore
+        lore.add(0, enchantment.getDisplayName() + " " + NumberUtils.convertToRoman(level));
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+
         return true;
     }
 
+    /**
+     * <p>
+     * Removes a custom enchantment from an item.
+     * </p>
+     *
+     * @param itemStack   The item that the enchantment should be removed from
+     * @param enchantment The enchantment to be removed
+     * @return True if the process was successful
+     */
     public static boolean removeEnchantment(ItemStack itemStack, CustomEnchantment enchantment) {
-        if (!hasEnchantment(itemStack, enchantment)) {
+        if (!CustomEnchantmentsAPI.hasEnchantment(itemStack, enchantment)) {
             return false;
         }
 
@@ -59,6 +79,18 @@ public class EnchantmentUtils {
         return true;
     }
 
+    /*
+    Enchantment utilities
+     */
+
+    /**
+     * <p>
+     * Gets all items which effects could be applied at the current time from a player.
+     * </p>
+     *
+     * @param player The player which has the items
+     * @return A list of items that a player
+     */
     public static List<ItemStack> getEnchantableItems(Player player) {
         List<ItemStack> enchantableItems = new ArrayList<>();
 
@@ -83,6 +115,34 @@ public class EnchantmentUtils {
         }
 
         return enchantableItems;
+    }
+
+    public static CustomEnchantment getEnchantmentByDisplayName(String displayName) {
+        List<CustomEnchantment> enchantments = CustomEnchantments.getInstance().getEnchantments();
+
+        if (!enchantments.isEmpty()) {
+            for (CustomEnchantment enchantment : enchantments) {
+                if (enchantment.getDisplayName().equals(displayName)) {
+                    return enchantment;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static CustomEnchantment getEnchantmentByName(String name) {
+        List<CustomEnchantment> enchantments = CustomEnchantments.getInstance().getEnchantments();
+
+        if (!enchantments.isEmpty()) {
+            for (CustomEnchantment enchantment : enchantments) {
+                if (enchantment.getName().equalsIgnoreCase(name)) {
+                    return enchantment;
+                }
+            }
+        }
+
+        return null;
     }
 
     public static Map<CustomEnchantment, Integer> getEnchantments(ItemStack itemStack) {
@@ -152,6 +212,62 @@ public class EnchantmentUtils {
             for (String line : lore) {
                 line = ChatColor.stripColor(line);
 
+                if (line.contains(enchantment.getDisplayName())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static void orderEnchantments(ItemStack itemStack, Comparator<CustomEnchantment> comparator) {
+        if (itemStack == null || !itemStack.hasItemMeta() || !itemStack.getItemMeta().hasLore()) {
+            return;
+        }
+
+        Map<CustomEnchantment, Integer> enchantmentsWithLevels = getEnchantments(itemStack);
+
+        if (enchantmentsWithLevels.isEmpty()) {
+            return;
+        }
+
+        List<CustomEnchantment> enchantments = new ArrayList<>(Arrays.asList(enchantmentsWithLevels.keySet().toArray(new CustomEnchantment[enchantmentsWithLevels.size()])));
+        List<String> lore = new ArrayList<>(itemStack.getItemMeta().getLore());
+
+        if (!enchantments.isEmpty()) {
+            int i;
+
+            enchantments.sort(comparator);
+
+            for (i = 0; i < lore.size(); i++) {
+                String line = ChatColor.stripColor(lore.get(i));
+
+                if (containsEnchantment(line)) {
+                    lore.remove(i);
+                    i--;
+                }
+            }
+
+            i = 0;
+
+            for (CustomEnchantment enchantment : enchantments) {
+                lore.add(i, enchantment.getDisplayName() + " " + NumberUtils.convertToRoman(enchantmentsWithLevels.get(enchantment)));
+                i++;
+            }
+        }
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+    }
+
+    private static boolean containsEnchantment(String line) {
+        List<CustomEnchantment> enchantments = CustomEnchantments.getInstance().getEnchantments();
+
+        if (!enchantments.isEmpty()) {
+            for (CustomEnchantment enchantment : enchantments) {
                 if (line.contains(enchantment.getDisplayName())) {
                     return true;
                 }

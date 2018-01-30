@@ -4,11 +4,11 @@ Plugin to manage custom enchantments and allow them to be easily added to items.
 Please note that this plugin only manages, contains methods to create custom enchantments easily and does not contain any custom enchantments inside.
 
 #### API Usage
-See[CustomEnchantmentsAPI](https://github.com/Naaathan/CustomEnchantments/tree/master/src/main/java/net/kyuzi/customenchantments/CustomEnchantmentsAPI.java)for all methods relating to custom enchantments
+See [CustomEnchantmentsAPI](https://github.com/Naaathan/CustomEnchantments/tree/master/src/main/java/net/kyuzi/customenchantments/CustomEnchantmentsAPI.java) for all methods relating to custom enchantments
 
-See[ExamplePlugin](https://github.com/Naaathan/CustomEnchantments/tree/master/src/test/java/ExamplePlugin.java)for an example of using[CustomEnchantmentsPlugin](https://github.com/Naaathan/CustomEnchantments/tree/master/net/kyuzi/customenchantments/plugin/CustomEnchantmentsPlugin.java)
+See [ExamplePlugin](https://github.com/Naaathan/CustomEnchantments/tree/master/src/test/java/ExamplePlugin.java)for an example of using [CustomEnchantmentsPlugin](https://github.com/Naaathan/CustomEnchantments/tree/master/net/kyuzi/customenchantments/plugin/CustomEnchantmentsPlugin.java)
 
-See[ExampleEnchantment](https://github.com/Naaathan/CustomEnchantments/tree/master/src/test/java/ExampleEnchantment.java)for an example of using[CustomEnchantment](https://github.com/Naaathan/CustomEnchantments/tree/master/net/kyuzi/customenchantments/enchantment/CustomEnchantment.java)
+See [ExampleEnchantment] (https://github.com/Naaathan/CustomEnchantments/tree/master/src/test/java/ExampleEnchantment.java) for an example of using [CustomEnchantment](https://github.com/Naaathan/CustomEnchantments/tree/master/net/kyuzi/customenchantments/enchantment/CustomEnchantment.java)
 
 
 #### Commands

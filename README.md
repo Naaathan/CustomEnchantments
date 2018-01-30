@@ -3,7 +3,7 @@ Plugin to manage custom enchantments and allow them to be easily added to items.
 
 Please note that this plugin only manages, contains methods to create custom enchantments easily and does not contain any custom enchantments inside.
 
-####API Usage
+#### API Usage
 See[CustomEnchantmentsAPI](https://github.com/Naaathan/CustomEnchantments/tree/master/src/main/java/net/kyuzi/customenchantments/CustomEnchantmentsAPI.java)for all methods relating to custom enchantments
 
 See[ExamplePlugin](https://github.com/Naaathan/CustomEnchantments/tree/master/src/test/java/ExamplePlugin.java)for an example of using[CustomEnchantmentsPlugin](https://github.com/Naaathan/CustomEnchantments/tree/master/net/kyuzi/customenchantments/plugin/CustomEnchantmentsPlugin.java)
@@ -11,7 +11,7 @@ See[ExamplePlugin](https://github.com/Naaathan/CustomEnchantments/tree/master/sr
 See[ExampleEnchantment](https://github.com/Naaathan/CustomEnchantments/tree/master/src/test/java/ExampleEnchantment.java)for an example of using[CustomEnchantment](https://github.com/Naaathan/CustomEnchantments/tree/master/net/kyuzi/customenchantments/enchantment/CustomEnchantment.java)
 
 
-####Commands
+#### Commands
 
 `/customenchantments - Display help message.`
 
@@ -25,6 +25,6 @@ See[ExampleEnchantment](https://github.com/Naaathan/CustomEnchantments/tree/mast
 
 `/customenchantments add <enchantment> <level> - Adds the custom enchantment named <enchantment> with level <level> to the item that you are holding.`
 
-####Permissions
+#### Permissions
 
 All permissions associated with commands are `customenchantments` followed by the subcommand name (apart from the help message which is `customenchantments.help`). E.g. `/customenchantments list`'s permission node is `customenchantments.list`.

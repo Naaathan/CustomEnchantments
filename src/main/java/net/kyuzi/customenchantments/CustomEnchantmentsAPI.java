@@ -4,6 +4,7 @@ import net.kyuzi.customenchantments.enchantment.CustomEnchantment;
 import net.kyuzi.customenchantments.enchantment.CustomEnchantmentTarget;
 import net.kyuzi.customenchantments.utility.NumberUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,19 +22,24 @@ public class CustomEnchantmentsAPI {
      * @param itemStack   The item to apply the enchantment to
      * @param enchantment The enchantment to be applied
      * @param level       The level of the enchantment
-     * @return True if the process was successful
+     * @return The item with the new enchantment
      */
-    public static boolean addEnchantment(ItemStack itemStack, CustomEnchantment enchantment, int level) {
-        if (!enchantment.canEnchantItem(itemStack) && level >= enchantment.getStartLevel()) {
+    public static boolean addEnchantment(ItemStack itemStack, CustomEnchantment enchantment, long level) {
+        if (!canEnchantItem(itemStack, enchantment, level)) {
             return false;
         }
 
-        Map<CustomEnchantment, Integer> itemEnchantments = CustomEnchantmentsAPI.getEnchantments(itemStack);
+        Map<CustomEnchantment, Long> itemEnchantments = CustomEnchantmentsAPI.getEnchantments(itemStack);
 
         if (!itemEnchantments.isEmpty()) {
-            for (CustomEnchantment itemEnchantment : itemEnchantments.keySet()) {
-                if (itemEnchantment.equals(enchantment)) {
-                    return false;
+            for (Map.Entry<CustomEnchantment, Long> itemEnchantment : itemEnchantments.entrySet()) {
+                if (itemEnchantment.getKey().equals(enchantment)) {
+                    if (itemEnchantment.getValue() == level) {
+                        return false;
+                    }
+
+                    removeEnchantment(itemStack, enchantment);
+                    break;
                 }
             }
         }
@@ -41,12 +47,18 @@ public class CustomEnchantmentsAPI {
         ItemMeta itemMeta = itemStack.getItemMeta();
         List<String> lore = (itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>());
 
-        lore.add(0, enchantment.getDisplayName() + " " + NumberUtils.convertToRoman(level));
+        lore.add(0, enchantment.getDisplayName() + " " + (enchantment.canUseNumerals() ? NumberUtils.convertToRoman(level) : level));
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
 
+        orderEnchantments(itemStack);
+
         return true;
+    }
+
+    public static boolean canEnchantItem(ItemStack itemStack, CustomEnchantment enchantment, long level) {
+        return enchantment.canEnchantItem(itemStack) && level >= enchantment.getStartLevel() && level <= enchantment.getMaxLevel();
     }
 
     /**
@@ -56,7 +68,7 @@ public class CustomEnchantmentsAPI {
      *
      * @param itemStack   The item that the enchantment should be removed from
      * @param enchantment The enchantment to be removed
-     * @return True if the process was successful
+     * @return The item without the enchantment
      */
     public static boolean removeEnchantment(ItemStack itemStack, CustomEnchantment enchantment) {
         if (!CustomEnchantmentsAPI.hasEnchantment(itemStack, enchantment)) {
@@ -145,8 +157,8 @@ public class CustomEnchantmentsAPI {
         return null;
     }
 
-    public static Map<CustomEnchantment, Integer> getEnchantments(ItemStack itemStack) {
-        Map<CustomEnchantment, Integer> enchantmentsWithLevels = new HashMap<>();
+    public static Map<CustomEnchantment, Long> getEnchantments(ItemStack itemStack) {
+        Map<CustomEnchantment, Long> enchantmentsWithLevels = new HashMap<>();
 
         if (!itemStack.hasItemMeta() || !itemStack.getItemMeta().hasLore()) {
             return enchantmentsWithLevels;
@@ -160,7 +172,7 @@ public class CustomEnchantmentsAPI {
             for (String line : lore) {
                 for (CustomEnchantment enchantment : enchantments) {
                     if (line.contains(enchantment.getDisplayName())) {
-                        int level = getLevel(enchantment, line);
+                        long level = getLevel(enchantment, line);
 
                         if (level >= enchantment.getStartLevel()) {
                             enchantmentsWithLevels.put(enchantment, level);
@@ -173,11 +185,11 @@ public class CustomEnchantmentsAPI {
         return enchantmentsWithLevels;
     }
 
-    public static int getLevel(ItemStack itemStack, CustomEnchantment enchantment) {
+    public static long getLevel(ItemStack itemStack, CustomEnchantment enchantment) {
         return getLevel(itemStack, enchantment, false);
     }
 
-    public static int getLevel(ItemStack itemStack, CustomEnchantment enchantment, boolean hasEnchantment) {
+    public static long getLevel(ItemStack itemStack, CustomEnchantment enchantment, boolean hasEnchantment) {
         if (!hasEnchantment && (!itemStack.getItemMeta().hasLore() || itemStack.getItemMeta().getLore().isEmpty())) {
             return 0;
         }
@@ -189,13 +201,13 @@ public class CustomEnchantmentsAPI {
                 continue;
             }
 
-            String levelNumerals = ChatColor.stripColor(line.replace(enchantment.getDisplayName() + " ", ""));
+            String level = ChatColor.stripColor(line.replace(enchantment.getDisplayName() + " ", ""));
 
-            if (!NumberUtils.isRomanNumeral(levelNumerals)) {
+            if ((!enchantment.canUseNumerals() && !NumberUtils.isLong(level)) || (enchantment.canUseNumerals() && !NumberUtils.isRomanNumeral(level))) {
                 return 0;
             }
 
-            return NumberUtils.convertFromRoman(levelNumerals);
+            return enchantment.canUseNumerals() ? NumberUtils.convertFromRoman(level) : Long.parseLong(level);
         }
 
         return 0;
@@ -210,8 +222,6 @@ public class CustomEnchantmentsAPI {
 
         if (!lore.isEmpty()) {
             for (String line : lore) {
-                line = ChatColor.stripColor(line);
-
                 if (line.contains(enchantment.getDisplayName())) {
                     return true;
                 }
@@ -221,12 +231,12 @@ public class CustomEnchantmentsAPI {
         return false;
     }
 
-    public static void orderEnchantments(ItemStack itemStack, Comparator<CustomEnchantment> comparator) {
+    public static void orderEnchantments(ItemStack itemStack) {
         if (itemStack == null || !itemStack.hasItemMeta() || !itemStack.getItemMeta().hasLore()) {
             return;
         }
 
-        Map<CustomEnchantment, Integer> enchantmentsWithLevels = getEnchantments(itemStack);
+        Map<CustomEnchantment, Long> enchantmentsWithLevels = getEnchantments(itemStack);
 
         if (enchantmentsWithLevels.isEmpty()) {
             return;
@@ -238,12 +248,18 @@ public class CustomEnchantmentsAPI {
         if (!enchantments.isEmpty()) {
             int i;
 
-            enchantments.sort(comparator);
+            enchantments.sort((enchantment1, enchantment2) -> {
+                if (enchantment1.getRank() < enchantment2.getRank()) {
+                    return -1;
+                } else if (enchantment1.getRank() > enchantment2.getRank()) {
+                    return 1;
+                }
+
+                return 0;
+            });
 
             for (i = 0; i < lore.size(); i++) {
-                String line = ChatColor.stripColor(lore.get(i));
-
-                if (containsEnchantment(line)) {
+                if (containsEnchantment(lore.get(i))) {
                     lore.remove(i);
                     i--;
                 }
@@ -252,7 +268,7 @@ public class CustomEnchantmentsAPI {
             i = 0;
 
             for (CustomEnchantment enchantment : enchantments) {
-                lore.add(i, enchantment.getDisplayName() + " " + NumberUtils.convertToRoman(enchantmentsWithLevels.get(enchantment)));
+                lore.add(i, enchantment.getDisplayName() + " " + (enchantment.canUseNumerals() ? NumberUtils.convertToRoman(enchantmentsWithLevels.get(enchantment)) : enchantmentsWithLevels.get(enchantment)));
                 i++;
             }
         }
@@ -261,6 +277,8 @@ public class CustomEnchantmentsAPI {
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
+
+        return;
     }
 
     private static boolean containsEnchantment(String line) {
@@ -277,14 +295,14 @@ public class CustomEnchantmentsAPI {
         return false;
     }
 
-    private static int getLevel(CustomEnchantment enchantment, String loreLine) {
-        String levelNumerals = ChatColor.stripColor(loreLine.replace(enchantment.getDisplayName() + " ", ""));
+    private static long getLevel(CustomEnchantment enchantment, String loreLine) {
+        String level = ChatColor.stripColor(loreLine.replace(enchantment.getDisplayName() + " ", ""));
 
-        if (!NumberUtils.isRomanNumeral(levelNumerals)) {
+        if ((!enchantment.canUseNumerals() && !NumberUtils.isLong(level)) || (enchantment.canUseNumerals() && !NumberUtils.isRomanNumeral(level))) {
             return 0;
         }
 
-        return NumberUtils.convertFromRoman(levelNumerals);
+        return enchantment.canUseNumerals() ? NumberUtils.convertFromRoman(level) : Long.parseLong(level);
     }
 
 }

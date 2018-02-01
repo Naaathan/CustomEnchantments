@@ -1,7 +1,8 @@
 name: CustomEnchantments
-version: 1.0-SNAPSHOT
-main: org.kyuzi.customenchantmentsts.CustomEnchantments
+version: 1.0.1-SNAPSHOT
+main: net.kyuzi.customenchantments.CustomEnchantments
 author: Nathan
 commands:
   customenchantments:
+    aliases: [ce]
     description: Manage custom enchantments.

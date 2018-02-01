@@ -16,15 +16,23 @@ public abstract class CustomEnchantment {
     private boolean enabled;
     private String name;
     private String displayName;
-    private int startLevel;
-    private int maxLevel;
+    private int rank;
+    private long startLevel;
+    private long maxLevel;
+    private boolean useNumerals;
 
-    public CustomEnchantment(String name, String displayName, int startLevel, int maxLevel) {
+    public CustomEnchantment(String name, String displayName, int rank, long startLevel, long maxLevel) {
+        this(name, displayName, rank, startLevel, maxLevel, true);
+    }
+
+    public CustomEnchantment(String name, String displayName, int rank, long startLevel, long maxLevel, boolean useNumerals) {
         this.enabled = true;
         this.name = name;
         this.displayName = displayName;
+        this.rank = rank;
         this.startLevel = startLevel;
         this.maxLevel = maxLevel;
+        this.useNumerals = useNumerals;
     }
 
     @Override
@@ -56,12 +64,20 @@ public abstract class CustomEnchantment {
         return displayName;
     }
 
-    public final int getStartLevel() {
+    public final int getRank() {
+        return rank;
+    }
+
+    public final long getStartLevel() {
         return startLevel;
     }
 
-    public final int getMaxLevel() {
+    public final long getMaxLevel() {
         return maxLevel;
+    }
+
+    public final boolean canUseNumerals() {
+        return useNumerals;
     }
 
     public final boolean canEnchantItem(ItemStack itemStack) {
@@ -76,22 +92,22 @@ public abstract class CustomEnchantment {
 
     public abstract CustomEnchantmentTarget getItemTarget();
 
-    public void onBlockBreak(BlockBreakEvent e, Player player, int level) {
+    public void onBlockBreak(BlockBreakEvent e, Player player, long level) {
     }
 
-    public void onEntityDamage(EntityDamageEvent e, Player damaged, int level) {
+    public void onEntityDamage(EntityDamageEvent e, Player damaged, long level) {
     }
 
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent e, Entity damaged, Entity damager, int level) {
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent e, Entity damaged, Entity damager, long level) {
     }
 
-    public void onPlayerInteract(PlayerInteractEvent e, Player player, int level) {
+    public void onPlayerInteract(PlayerInteractEvent e, Player player, long level) {
     }
 
-    public void onProjectileHit(ProjectileHitEvent e, Player shooter, Projectile projectile, int level) {
+    public void onProjectileHit(ProjectileHitEvent e, Player shooter, Projectile projectile, long level) {
     }
 
-    public void onProjectileLaunch(ProjectileLaunchEvent e, Player shooter, Projectile projectile, int level) {
+    public void onProjectileLaunch(ProjectileLaunchEvent e, Player shooter, Projectile projectile, long level) {
     }
 
 }

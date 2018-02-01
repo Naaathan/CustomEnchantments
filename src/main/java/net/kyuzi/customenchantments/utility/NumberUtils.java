@@ -10,41 +10,41 @@ public class NumberUtils {
 
     // Converting from roman numerals
     private final static Pattern pattern = Pattern.compile("M|CM|D|CD|C|XC|L|XL|X|IX|V|IV|I");
-    private final static Hashtable<String, Integer> romanToValue = new Hashtable<>();
+    private final static Hashtable<String, Long> romanToValue = new Hashtable<>();
 
     // Converting to roman numerals
-    private final static TreeMap<Integer, String> valueToRoman = new TreeMap<>();
+    private final static TreeMap<Long, String> valueToRoman = new TreeMap<>();
 
     static {
         // Converting from roman numerals
-        romanToValue.put("M", 1000);
-        romanToValue.put("CM", 900);
-        romanToValue.put("D", 500);
-        romanToValue.put("CD", 400);
-        romanToValue.put("C", 100);
-        romanToValue.put("XC", 90);
-        romanToValue.put("L", 50);
-        romanToValue.put("XL", 40);
-        romanToValue.put("X", 10);
-        romanToValue.put("IX", 9);
-        romanToValue.put("V", 5);
-        romanToValue.put("IV", 4);
-        romanToValue.put("I", 1);
+        romanToValue.put("M", 1000L);
+        romanToValue.put("CM", 900L);
+        romanToValue.put("D", 500L);
+        romanToValue.put("CD", 400L);
+        romanToValue.put("C", 100L);
+        romanToValue.put("XC", 90L);
+        romanToValue.put("L", 50L);
+        romanToValue.put("XL", 40L);
+        romanToValue.put("X", 10L);
+        romanToValue.put("IX", 9L);
+        romanToValue.put("V", 5L);
+        romanToValue.put("IV", 4L);
+        romanToValue.put("I", 1L);
 
         // Converting to roman numerals
-        valueToRoman.put(1000, "M");
-        valueToRoman.put(900, "CM");
-        valueToRoman.put(500, "D");
-        valueToRoman.put(400, "CD");
-        valueToRoman.put(100, "C");
-        valueToRoman.put(90, "XC");
-        valueToRoman.put(50, "L");
-        valueToRoman.put(40, "XL");
-        valueToRoman.put(10, "X");
-        valueToRoman.put(9, "IX");
-        valueToRoman.put(5, "V");
-        valueToRoman.put(4, "IV");
-        valueToRoman.put(1, "I");
+        valueToRoman.put(1000L, "M");
+        valueToRoman.put(900L, "CM");
+        valueToRoman.put(500L, "D");
+        valueToRoman.put(400L, "CD");
+        valueToRoman.put(100L, "C");
+        valueToRoman.put(90L, "XC");
+        valueToRoman.put(50L, "L");
+        valueToRoman.put(40L, "XL");
+        valueToRoman.put(10L, "X");
+        valueToRoman.put(9L, "IX");
+        valueToRoman.put(5L, "V");
+        valueToRoman.put(4L, "IV");
+        valueToRoman.put(1L, "I");
     }
 
 
@@ -57,7 +57,7 @@ public class NumberUtils {
         int result = 0;
 
         while (matcher.find()) {
-            for (Map.Entry<String, Integer> romanNumeral : romanToValue.entrySet()) {
+            for (Map.Entry<String, Long> romanNumeral : romanToValue.entrySet()) {
                 if (romanNumeral.getKey().equals(matcher.group(0))) {
                     result += romanNumeral.getValue();
                 }
@@ -67,8 +67,8 @@ public class NumberUtils {
         return result;
     }
 
-    public static String convertToRoman(int value) {
-        int l = valueToRoman.floorKey(value);
+    public static String convertToRoman(long value) {
+        long l = valueToRoman.floorKey(value);
 
         if (value == l) {
             return valueToRoman.get(value);
@@ -80,6 +80,16 @@ public class NumberUtils {
     public static boolean isInteger(String value) {
         try {
             Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean isLong(String value) {
+        try {
+            Long.parseLong(value);
         } catch (NumberFormatException e) {
             return false;
         }

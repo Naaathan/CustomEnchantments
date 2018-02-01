@@ -36,16 +36,16 @@ public class CustomEnchantmentListener implements Listener {
 
         Player player = e.getPlayer();
         List<ItemStack> items = CustomEnchantmentsAPI.getEnchantableItems(player);
-        Map<ItemStack, Map<CustomEnchantment, Integer>> itemsWithEnchantments = getItemsWithEnchantments(items);
+        Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = getItemsWithEnchantments(items);
 
         if (itemsWithEnchantments.isEmpty()) {
             return;
         }
 
-        for (Map<CustomEnchantment, Integer> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
-            for (Map.Entry<CustomEnchantment, Integer> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
+        for (Map<CustomEnchantment, Long> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
+            for (Map.Entry<CustomEnchantment, Long> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
                 CustomEnchantment enchantment = itemEnchantmentWithLevel.getKey();
-                int level = itemEnchantmentWithLevel.getValue();
+                long level = itemEnchantmentWithLevel.getValue();
 
                 enchantment.onBlockBreak(e, player, level);
             }
@@ -73,16 +73,16 @@ public class CustomEnchantmentListener implements Listener {
 
         items.remove(player.getItemInHand());
 
-        Map<ItemStack, Map<CustomEnchantment, Integer>> itemsWithEnchantments = getItemsWithEnchantments(items);
+        Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = getItemsWithEnchantments(items);
 
         if (itemsWithEnchantments.isEmpty()) {
             return;
         }
 
-        for (Map<CustomEnchantment, Integer> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
-            for (Map.Entry<CustomEnchantment, Integer> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
+        for (Map<CustomEnchantment, Long> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
+            for (Map.Entry<CustomEnchantment, Long> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
                 CustomEnchantment enchantment = itemEnchantmentWithLevel.getKey();
-                int level = itemEnchantmentWithLevel.getValue();
+                long level = itemEnchantmentWithLevel.getValue();
 
                 enchantment.onEntityDamage(e, player, level);
             }
@@ -107,16 +107,16 @@ public class CustomEnchantmentListener implements Listener {
 
             items.remove(player.getItemInHand());
 
-            Map<ItemStack, Map<CustomEnchantment, Integer>> itemsWithEnchantments = getItemsWithEnchantments(items);
+            Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = getItemsWithEnchantments(items);
 
             if (itemsWithEnchantments.isEmpty()) {
                 return;
             }
 
-            for (Map<CustomEnchantment, Integer> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
-                for (Map.Entry<CustomEnchantment, Integer> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
+            for (Map<CustomEnchantment, Long> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
+                for (Map.Entry<CustomEnchantment, Long> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
                     CustomEnchantment enchantment = itemEnchantmentWithLevel.getKey();
-                    int level = itemEnchantmentWithLevel.getValue();
+                    long level = itemEnchantmentWithLevel.getValue();
 
                     enchantment.onEntityDamageByEntity(e, player, e.getDamager(), level);
                 }
@@ -126,16 +126,16 @@ public class CustomEnchantmentListener implements Listener {
         if (e.getDamager() instanceof Player) {
             Player player = (Player) e.getDamager();
             List<ItemStack> items = CustomEnchantmentsAPI.getEnchantableItems(player);
-            Map<ItemStack, Map<CustomEnchantment, Integer>> itemsWithEnchantments = getItemsWithEnchantments(items);
+            Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = getItemsWithEnchantments(items);
 
             if (itemsWithEnchantments.isEmpty()) {
                 return;
             }
 
-            for (Map<CustomEnchantment, Integer> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
-                for (Map.Entry<CustomEnchantment, Integer> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
+            for (Map<CustomEnchantment, Long> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
+                for (Map.Entry<CustomEnchantment, Long> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
                     CustomEnchantment enchantment = itemEnchantmentWithLevel.getKey();
-                    int level = itemEnchantmentWithLevel.getValue();
+                    long level = itemEnchantmentWithLevel.getValue();
 
                     enchantment.onEntityDamageByEntity(e, e.getEntity(), player, level);
                 }
@@ -144,7 +144,7 @@ public class CustomEnchantmentListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerInteract(PlayerInteractEvent e) {
+    public void onPlayerlongeract(PlayerInteractEvent e) {
         if (e.isCancelled()) {
             return;
         }
@@ -157,16 +157,16 @@ public class CustomEnchantmentListener implements Listener {
 
         Player player = e.getPlayer();
         List<ItemStack> items = CustomEnchantmentsAPI.getEnchantableItems(player);
-        Map<ItemStack, Map<CustomEnchantment, Integer>> itemsWithEnchantments = getItemsWithEnchantments(items);
+        Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = getItemsWithEnchantments(items);
 
         if (itemsWithEnchantments.isEmpty()) {
             return;
         }
 
-        for (Map<CustomEnchantment, Integer> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
-            for (Map.Entry<CustomEnchantment, Integer> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
+        for (Map<CustomEnchantment, Long> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
+            for (Map.Entry<CustomEnchantment, Long> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
                 CustomEnchantment enchantment = itemEnchantmentWithLevel.getKey();
-                int level = itemEnchantmentWithLevel.getValue();
+                long level = itemEnchantmentWithLevel.getValue();
 
                 enchantment.onPlayerInteract(e, player, level);
             }
@@ -190,16 +190,16 @@ public class CustomEnchantmentListener implements Listener {
 
         Player player = (Player) shooter;
         List<ItemStack> items = CustomEnchantmentsAPI.getEnchantableItems(player);
-        Map<ItemStack, Map<CustomEnchantment, Integer>> itemsWithEnchantments = getItemsWithEnchantments(items);
+        Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = getItemsWithEnchantments(items);
 
         if (itemsWithEnchantments.isEmpty()) {
             return;
         }
 
-        for (Map<CustomEnchantment, Integer> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
-            for (Map.Entry<CustomEnchantment, Integer> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
+        for (Map<CustomEnchantment, Long> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
+            for (Map.Entry<CustomEnchantment, Long> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
                 CustomEnchantment enchantment = itemEnchantmentWithLevel.getKey();
-                int level = itemEnchantmentWithLevel.getValue();
+                long level = itemEnchantmentWithLevel.getValue();
 
                 enchantment.onProjectileHit(e, player, projectile, level);
             }
@@ -227,31 +227,31 @@ public class CustomEnchantmentListener implements Listener {
 
         Player player = (Player) shooter;
         List<ItemStack> items = CustomEnchantmentsAPI.getEnchantableItems(player);
-        Map<ItemStack, Map<CustomEnchantment, Integer>> itemsWithEnchantments = getItemsWithEnchantments(items);
+        Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = getItemsWithEnchantments(items);
 
         if (itemsWithEnchantments.isEmpty()) {
             return;
         }
 
-        for (Map<CustomEnchantment, Integer> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
-            for (Map.Entry<CustomEnchantment, Integer> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
+        for (Map<CustomEnchantment, Long> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
+            for (Map.Entry<CustomEnchantment, Long> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
                 CustomEnchantment enchantment = itemEnchantmentWithLevel.getKey();
-                int level = itemEnchantmentWithLevel.getValue();
+                long level = itemEnchantmentWithLevel.getValue();
 
                 enchantment.onProjectileLaunch(e, player, projectile, level);
             }
         }
     }
 
-    private Map<ItemStack, Map<CustomEnchantment, Integer>> getItemsWithEnchantments(List<ItemStack> items) {
-        Map<ItemStack, Map<CustomEnchantment, Integer>> itemsWithEnchantments = new HashMap<>();
+    private Map<ItemStack, Map<CustomEnchantment, Long>> getItemsWithEnchantments(List<ItemStack> items) {
+        Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = new HashMap<>();
 
         if (items.isEmpty()) {
             return itemsWithEnchantments;
         }
 
         for (ItemStack item : items) {
-            Map<CustomEnchantment, Integer> itemEnchantments = CustomEnchantmentsAPI.getEnchantments(item);
+            Map<CustomEnchantment, Long> itemEnchantments = CustomEnchantmentsAPI.getEnchantments(item);
 
             if (!itemEnchantments.isEmpty()) {
                 itemsWithEnchantments.put(item, itemEnchantments);

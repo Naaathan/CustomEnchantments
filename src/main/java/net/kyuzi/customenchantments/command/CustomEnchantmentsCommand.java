@@ -124,12 +124,12 @@ public class CustomEnchantmentsCommand implements CommandExecutor {
                 CustomEnchantment enchantment = CustomEnchantmentsAPI.getEnchantmentByName(args[1]);
 
                 if (enchantment != null) {
-                    if (NumberUtils.isInteger(args[2])) {
+                    if (NumberUtils.isLong(args[2])) {
                         Player player = (Player) sender;
                         ItemStack itemStack = player.getItemInHand();
 
                         if (itemStack != null) {
-                            int level = Integer.parseInt(args[2]);
+                            long level = Long.parseLong(args[2]);
 
                             if (CustomEnchantmentsAPI.addEnchantment(itemStack, enchantment, level)) {
                                 sender.sendMessage(ChatColor.GREEN + "You have added the " + enchantment.getName() + " enchantment with level " + level + " to the item you are holding!");

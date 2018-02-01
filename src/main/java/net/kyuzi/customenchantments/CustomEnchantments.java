@@ -6,7 +6,6 @@ import net.kyuzi.customenchantments.command.CustomEnchantmentsCommand;
 import net.kyuzi.customenchantments.enchantment.CustomEnchantment;
 import net.kyuzi.customenchantments.listener.CustomEnchantmentListener;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,12 +51,6 @@ public class CustomEnchantments extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        File defaultConfig = new File(getDataFolder(), "config.yml");
-
-        if (!defaultConfig.exists()) {
-            saveDefaultConfig();
-        }
-
         instance = this;
         enchantments = new ArrayList<>();
 

@@ -14,7 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 public class ExampleEnchantment extends CustomEnchantment {
 
     public ExampleEnchantment() {
-        super("Example", ChatColor.AQUA + "Absorption", 1, 2);
+        super("Example", ChatColor.AQUA + "Absorption", 1, 1, 2);
     }
 
     @Override
@@ -23,15 +23,13 @@ public class ExampleEnchantment extends CustomEnchantment {
     }
 
     @Override
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent e, Entity damaged, Entity damager, int level) {
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent e, Entity damaged, Entity damager, long level) {
         double damage = e.getFinalDamage();
 
-        switch (level) {
-            case 1:
-                damage -= 2;
-                break;
-            case 2:
-                damage -= 4;
+        if (level == 1) {
+            damage -= 2;
+        } else if (level == 2) {
+            damage -= 4;
         }
 
         damage = damage < 0 ? 0 : damage;

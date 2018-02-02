@@ -51,7 +51,7 @@ public class CustomEnchantmentsAPI {
                         return false;
                     }
 
-                    removeEnchantment(itemStack, enchantment);
+                    removeEnchantment(itemStack, enchantment, false);
                     break;
                 }
             }

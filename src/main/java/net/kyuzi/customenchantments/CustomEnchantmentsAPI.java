@@ -2,6 +2,8 @@ package net.kyuzi.customenchantments;
 
 import net.kyuzi.customenchantments.enchantment.CustomEnchantment;
 import net.kyuzi.customenchantments.enchantment.CustomEnchantmentTarget;
+import net.kyuzi.customenchantments.event.AddEnchantmentEvent;
+import net.kyuzi.customenchantments.event.RemoveEnchantmentEvent;
 import net.kyuzi.customenchantments.utility.NumberUtils;
 
 import org.bukkit.Bukkit;
@@ -22,10 +24,17 @@ public class CustomEnchantmentsAPI {
      * @param itemStack   The item to apply the enchantment to
      * @param enchantment The enchantment to be applied
      * @param level       The level of the enchantment
-     * @return The item with the new enchantment
+     * @return True if the enchantment was added
      */
     public static boolean addEnchantment(ItemStack itemStack, CustomEnchantment enchantment, long level) {
         if (!canEnchantItem(itemStack, enchantment, level)) {
+            return false;
+        }
+
+        AddEnchantmentEvent event = new AddEnchantmentEvent(enchantment, itemStack, level);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
             return false;
         }
 
@@ -57,43 +66,19 @@ public class CustomEnchantmentsAPI {
         return true;
     }
 
+    /**
+     * <p>
+     * Checks if an item can be enchanted with a custom enchantment at certain level.
+     * </p>
+     *
+     * @param itemStack   The item being enchanted
+     * @param enchantment The enchantment being applied
+     * @param level       The level of the enchantment
+     * @return True if the item can be enchanted
+     */
     public static boolean canEnchantItem(ItemStack itemStack, CustomEnchantment enchantment, long level) {
         return enchantment.canEnchantItem(itemStack) && level >= enchantment.getStartLevel() && level <= enchantment.getMaxLevel();
     }
-
-    /**
-     * <p>
-     * Removes a custom enchantment from an item.
-     * </p>
-     *
-     * @param itemStack   The item that the enchantment should be removed from
-     * @param enchantment The enchantment to be removed
-     * @return The item without the enchantment
-     */
-    public static boolean removeEnchantment(ItemStack itemStack, CustomEnchantment enchantment) {
-        if (!CustomEnchantmentsAPI.hasEnchantment(itemStack, enchantment)) {
-            return false;
-        }
-
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        List<String> lore = itemMeta.getLore();
-
-        for (String line : lore) {
-            if (line.contains(enchantment.getDisplayName())) {
-                lore.remove(line);
-                break;
-            }
-        }
-
-        itemMeta.setLore(lore);
-        itemStack.setItemMeta(itemMeta);
-
-        return true;
-    }
-
-    /*
-    Enchantment utilities
-     */
 
     /**
      * <p>
@@ -129,6 +114,14 @@ public class CustomEnchantmentsAPI {
         return enchantableItems;
     }
 
+    /**
+     * <p>
+     * Gets an enchantment from its display name (the string shown on the lore).
+     * </p>
+     *
+     * @param displayName The enchantment's display name
+     * @return The enchantment which has the passed display name
+     */
     public static CustomEnchantment getEnchantmentByDisplayName(String displayName) {
         List<CustomEnchantment> enchantments = CustomEnchantments.getInstance().getEnchantments();
 
@@ -143,6 +136,14 @@ public class CustomEnchantmentsAPI {
         return null;
     }
 
+    /**
+     * <p>
+     * Gets an enchantment from its unique name.
+     * </p>
+     *
+     * @param name The enchantment's unique name
+     * @return The enchantment which has the passed unique name
+     */
     public static CustomEnchantment getEnchantmentByName(String name) {
         List<CustomEnchantment> enchantments = CustomEnchantments.getInstance().getEnchantments();
 
@@ -157,6 +158,14 @@ public class CustomEnchantmentsAPI {
         return null;
     }
 
+    /**
+     * <p>
+     * Gets all custom enchantments that are on an item.
+     * </p>
+     *
+     * @param itemStack The item with potential custom enchantments
+     * @return A map of all custom enchantments found on the item passed with their levels
+     */
     public static Map<CustomEnchantment, Long> getEnchantments(ItemStack itemStack) {
         Map<CustomEnchantment, Long> enchantmentsWithLevels = new HashMap<>();
 
@@ -185,13 +194,18 @@ public class CustomEnchantmentsAPI {
         return enchantmentsWithLevels;
     }
 
+    /**
+     * <p>
+     * Gets the level of a custom enchantment which is on an item.
+     * </p>
+     *
+     * @param itemStack   The item with the potential custom enchantment
+     * @param enchantment The custom enchantment which the level is being found for
+     * @return The passed custom enchantment's level or -1 if no the item does not have the custom enchantment
+     */
     public static long getLevel(ItemStack itemStack, CustomEnchantment enchantment) {
-        return getLevel(itemStack, enchantment, false);
-    }
-
-    public static long getLevel(ItemStack itemStack, CustomEnchantment enchantment, boolean hasEnchantment) {
-        if (!hasEnchantment && (!itemStack.getItemMeta().hasLore() || itemStack.getItemMeta().getLore().isEmpty())) {
-            return 0;
+        if (!hasEnchantment(itemStack, enchantment)) {
+            return -1;
         }
 
         List<String> lore = itemStack.getItemMeta().getLore();
@@ -204,15 +218,24 @@ public class CustomEnchantmentsAPI {
             String level = ChatColor.stripColor(line.replace(enchantment.getDisplayName() + " ", ""));
 
             if ((!enchantment.canUseNumerals() && !NumberUtils.isLong(level)) || (enchantment.canUseNumerals() && !NumberUtils.isRomanNumeral(level))) {
-                return 0;
+                return -1;
             }
 
             return enchantment.canUseNumerals() ? NumberUtils.convertFromRoman(level) : Long.parseLong(level);
         }
 
-        return 0;
+        return -1;
     }
 
+    /**
+     * <p>
+     * Checks if an item holds a custom enchantment.
+     * </p>
+     *
+     * @param itemStack   The item with the potential custom enchantment
+     * @param enchantment The enchantment which the item may have
+     * @return True if the item holds the custom enchantment
+     */
     public static boolean hasEnchantment(ItemStack itemStack, CustomEnchantment enchantment) {
         if (!itemStack.hasItemMeta() || !itemStack.getItemMeta().hasLore()) {
             return false;
@@ -231,6 +254,13 @@ public class CustomEnchantmentsAPI {
         return false;
     }
 
+    /**
+     * <p>
+     * Sorts the item's enchantments in regards to their rank on the item's lore.
+     * </p>
+     *
+     * @param itemStack The item to be sorted
+     */
     public static void orderEnchantments(ItemStack itemStack) {
         if (itemStack == null || !itemStack.hasItemMeta() || !itemStack.getItemMeta().hasLore()) {
             return;
@@ -277,16 +307,29 @@ public class CustomEnchantmentsAPI {
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
-
-        return;
     }
 
-    private static boolean containsEnchantment(String line) {
+    /**
+     * <p>
+     * Removes a custom enchantment from an item.
+     * </p>
+     *
+     * @param itemStack   The item that the enchantment should be removed from
+     * @param enchantment The enchantment to be removed
+     * @return True if the enchantment was removed
+     */
+    public static boolean removeEnchantment(ItemStack itemStack, CustomEnchantment enchantment) {
+        return removeEnchantment(itemStack, enchantment, true);
+    }
+
+    /* Utility methods */
+
+    private static boolean containsEnchantment(String loreLine) {
         List<CustomEnchantment> enchantments = CustomEnchantments.getInstance().getEnchantments();
 
         if (!enchantments.isEmpty()) {
             for (CustomEnchantment enchantment : enchantments) {
-                if (line.contains(enchantment.getDisplayName())) {
+                if (loreLine.contains(enchantment.getDisplayName())) {
                     return true;
                 }
             }
@@ -299,10 +342,40 @@ public class CustomEnchantmentsAPI {
         String level = ChatColor.stripColor(loreLine.replace(enchantment.getDisplayName() + " ", ""));
 
         if ((!enchantment.canUseNumerals() && !NumberUtils.isLong(level)) || (enchantment.canUseNumerals() && !NumberUtils.isRomanNumeral(level))) {
-            return 0;
+            return -1;
         }
 
         return enchantment.canUseNumerals() ? NumberUtils.convertFromRoman(level) : Long.parseLong(level);
+    }
+
+    private static boolean removeEnchantment(ItemStack itemStack, CustomEnchantment enchantment, boolean callEvent) {
+        if (!CustomEnchantmentsAPI.hasEnchantment(itemStack, enchantment)) {
+            return false;
+        }
+
+        if (callEvent) {
+            RemoveEnchantmentEvent event = new RemoveEnchantmentEvent(enchantment, itemStack);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return false;
+            }
+        }
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = itemMeta.getLore();
+
+        for (String line : lore) {
+            if (line.contains(enchantment.getDisplayName())) {
+                lore.remove(line);
+                break;
+            }
+        }
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+
+        return true;
     }
 
 }

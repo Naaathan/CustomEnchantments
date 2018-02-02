@@ -38,6 +38,10 @@ public class CustomEnchantmentsAPI {
             return false;
         }
 
+        // Update if the enchantment or level has been changed
+        enchantment = event.getCustomEnchantment();
+        level = event.getLevel();
+
         Map<CustomEnchantment, Long> itemEnchantments = CustomEnchantmentsAPI.getEnchantments(itemStack);
 
         if (!itemEnchantments.isEmpty()) {

@@ -24,10 +24,4 @@ public class RemoveEnchantmentEvent extends CustomEnchantmentsEvent implements C
         this.cancelled = cancelled;
     }
 
-    public void setCustomEnchantment(CustomEnchantment customEnchantment) {
-        if (customEnchantment != null) {
-            this.customEnchantment = customEnchantment;
-        }
-    }
-
 }

@@ -4,6 +4,8 @@ import net.kyuzi.customenchantments.CustomEnchantments;
 import net.kyuzi.customenchantments.CustomEnchantmentsAPI;
 import net.kyuzi.customenchantments.enchantment.CustomEnchantment;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -16,6 +18,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.*;
@@ -144,7 +147,7 @@ public class CustomEnchantmentListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerlongeract(PlayerInteractEvent e) {
+    public void onPlayerInteract(PlayerInteractEvent e) {
         if (e.isCancelled()) {
             return;
         }
@@ -189,20 +192,13 @@ public class CustomEnchantmentListener implements Listener {
         }
 
         Player player = (Player) shooter;
-        List<ItemStack> items = CustomEnchantmentsAPI.getEnchantableItems(player);
-        Map<ItemStack, Map<CustomEnchantment, Long>> itemsWithEnchantments = getItemsWithEnchantments(items);
+        Map<CustomEnchantment, Long> projectileEnchantments = getEntityEnchantments(projectile);
 
-        if (itemsWithEnchantments.isEmpty()) {
-            return;
-        }
+        for (Map.Entry<CustomEnchantment, Long> projectileEnchantment : projectileEnchantments.entrySet()) {
+            CustomEnchantment enchantment = projectileEnchantment.getKey();
+            long level = projectileEnchantment.getValue();
 
-        for (Map<CustomEnchantment, Long> itemEnchantmentsWithLevels : itemsWithEnchantments.values()) {
-            for (Map.Entry<CustomEnchantment, Long> itemEnchantmentWithLevel : itemEnchantmentsWithLevels.entrySet()) {
-                CustomEnchantment enchantment = itemEnchantmentWithLevel.getKey();
-                long level = itemEnchantmentWithLevel.getValue();
-
-                enchantment.onProjectileHit(e, player, projectile, level);
-            }
+            enchantment.onProjectileHit(e, player, projectile, level);
         }
     }
 
@@ -239,8 +235,27 @@ public class CustomEnchantmentListener implements Listener {
                 long level = itemEnchantmentWithLevel.getValue();
 
                 enchantment.onProjectileLaunch(e, player, projectile, level);
+
+                if (!e.isCancelled()) {
+                    projectile.setMetadata(enchantment.getName(), new FixedMetadataValue(CustomEnchantments.getInstance(), level));
+                }
             }
         }
+    }
+
+    private Map<CustomEnchantment, Long> getEntityEnchantments(Entity entity) {
+        Map<CustomEnchantment, Long> enchantments = new HashMap<>();
+        List<CustomEnchantment> loadedEnchantments = CustomEnchantments.getInstance().getEnchantments();
+
+        if (!loadedEnchantments.isEmpty()) {
+            for (CustomEnchantment enchantment : loadedEnchantments) {
+                if (entity.hasMetadata(enchantment.getName())) {
+                    enchantments.put(enchantment, entity.getMetadata(enchantment.getName()).get(0).asLong());
+                }
+            }
+        }
+
+        return enchantments;
     }
 
     private Map<ItemStack, Map<CustomEnchantment, Long>> getItemsWithEnchantments(List<ItemStack> items) {

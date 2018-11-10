@@ -46,7 +46,7 @@ public class CustomEnchantments extends JavaPlugin {
     }
 
     public List<CustomEnchantment> getEnchantments() {
-        return Arrays.asList(enchantments.toArray(new CustomEnchantment[enchantments.size()]));
+        return Arrays.asList(enchantments.toArray(new CustomEnchantment[0]));
     }
 
     @Override

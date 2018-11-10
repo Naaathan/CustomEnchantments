@@ -7,7 +7,7 @@ public enum CustomEnchantmentTarget {
 
     ALL {
         public boolean includes(ItemStack itemStack) {
-            return true;
+            return itemStack != null;
         }
     },
     ARMOUR {
@@ -60,18 +60,6 @@ public enum CustomEnchantmentTarget {
             return itemStack != null && (itemStack.getType().name().contains("AXE") || itemStack.getType().name().contains("SWORD"));
         }
     };
-
-    public static boolean isTarget(ItemStack itemStack) {
-        if (itemStack != null) {
-            for (CustomEnchantmentTarget target : values()) {
-                if (target.includes(itemStack)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
 
     public abstract boolean includes(ItemStack itemStack);
 

@@ -95,23 +95,23 @@ public class CustomEnchantmentsAPI {
     public static List<ItemStack> getEnchantableItems(Player player) {
         List<ItemStack> enchantableItems = new ArrayList<>();
 
-        if (CustomEnchantmentTarget.isTarget(player.getItemInHand())) {
+        if (player.getItemInHand() != null) {
             enchantableItems.add(player.getItemInHand());
         }
 
-        if (CustomEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[0])) {
+        if (player.getInventory().getArmorContents()[0] != null) {
             enchantableItems.add(player.getInventory().getArmorContents()[0]);
         }
 
-        if (CustomEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[1])) {
+        if (player.getInventory().getArmorContents()[1] != null) {
             enchantableItems.add(player.getInventory().getArmorContents()[1]);
         }
 
-        if (CustomEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[2])) {
+        if (player.getInventory().getArmorContents()[2] != null) {
             enchantableItems.add(player.getInventory().getArmorContents()[2]);
         }
 
-        if (CustomEnchantmentTarget.isTarget(player.getInventory().getArmorContents()[3])) {
+        if (player.getInventory().getArmorContents()[3] != null) {
             enchantableItems.add(player.getInventory().getArmorContents()[3]);
         }
 
